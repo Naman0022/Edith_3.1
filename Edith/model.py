@@ -3,10 +3,6 @@ import google.generativeai as genai
 
 import time
 import os
-import sys
-import urllib
-import keyboard
-import re
 
 
 genai.configure(api_key='AIzaSyDL-rzwGx6VVEtln2V4n7yX8_VXAZqAZoo')
@@ -189,19 +185,12 @@ def playMusic():
 
 
 def longmsg(text):
-    f = open('response.txt', 'w')
+    f = open('response.txt', "w", encoding="utf-8")
     f.write(text)
     f.close()
     # Example usage
     filename = "response.txt"
     open_and_wait_for_file_close(filename)
-    # window=Tk()
-    # window.title('Edith')
-    # lbl=Label(window,width=80,wraplength=500,text=text, fg="white", bg="black",justify=LEFT ,font=("Arial",12))
-    # lbl.place(x=20, y=20)
-    # window.configure(background='black')
-    # # window.geometry("")
-    # window.mainloop()
     return
 
 import subprocess
@@ -220,13 +209,12 @@ def open_and_wait_for_file_close(filename):
       print("File closed. Resuming program...")
       break
 
-
 chat = model.start_chat(history=[])
 
 updateRules(chat,False)
 
 quit=False
-handsfree=True
+handsfree=False
 question="None"
 while True:
     if quit==True:
@@ -247,8 +235,11 @@ while True:
         # sys.exit(0)
         break
     
+    elif "your screen" in response.text.lower() or "my screen" in question.lower():
+        speak("Wait") 
+        os.system("python D:\code\Python\Edith_3.1\Gemini Pro\geminiVision_api.py")
     
-    elif len(response.text)<=400:
+    elif len(response.text)<=1000:
         print("Edith:",response.text)
         speak(response.text)
     else:
