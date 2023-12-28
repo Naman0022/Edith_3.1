@@ -40,11 +40,13 @@ def takeCommand():
         audio=r.listen(source)
         return statement
     
-def developerMode(quit):
+def developerMode(rules,quit):
     print("Developer Mode on...")
     speak("Developer Mode onn")
+    code="None"
     while True:
-        code=takeCommand().lower()
+        while code=="None":
+            code=takeCommand().lower()
         print(">> "+code)
         if "quit" in code or "exit" in code:
             return
@@ -57,14 +59,14 @@ def developerMode(quit):
             with open("d:\code\Python\Edith_3.1\Edith\model_dummy.py") as f:
                 lines = f.readlines()
             with open("d:\code\Python\Edith_3.1\Edith\model_dummy.py", "w") as f:
-                lines.insert(87, "\nchat.send_message("+newcond+")\n")
+                lines.insert(90, "\nchat.send_message(\""+newcond+"\")\n")
                 f.write("".join(lines))
                 speak('code successfully updated')
             time.sleep(1)
             speak("do you want to restart project to save changes made")
             confirm="none"
             while confirm.lower() == "none":
-                confirm = takeCommand().lower()
+                confirm = takeCommand()
                 if 'yes' in confirm or 'yep' in confirm:
                     speak("restarting project. please wait")
                     quit=True
@@ -88,23 +90,32 @@ def longmsg(text):
 
 
 
-
-chat.send_message(address the user as Mr)
 chat = model.start_chat(history=[])
 
-chat.send_message("You are Edith version 3.1 and you were a language model created by google and integrated by Naman Punj .You have to check if any of the text you are given is indicating if a user is sad and if so do try to cheer them up. Alsodo reply every answer in short and do not give anything extra in the reply.if a user says bye or want to leave or wants you to leave your reply should contain the word bye")
+rules=chat.send_message("""
+    Write these instructions as rules that will be followed by you
+    You are Edith version 3.1 and you were a language model created by google and integrated by Naman Punj .You have to check if any of the text you are given is indicating if a user is sad and if so do try to cheer them up. Alsodo reply every answer in short and do not give anything extra in the reply.if a user says bye or want to leave or wants you to leave your reply should contain the word bye. if user askes to play music reply 'playing : song name'    
+""")
 
 
 quit=False
+handsfree=False
+question="None"
 while True:
     if quit==True:
         break
-    question = takeCommand()
+    if "mode" in question and "change" in question:
+        handsfree=~handsfree
+    if handsfree:
+        question = takeCommand()
+    else:
+        question = input(">>")
     print(">> "+question)
     # try:
-    if "developer mode" in question:
-        developerMode(quit)
+    if "developer mode" in question.lower():
+        developerMode(rules,quit)
         continue
+
     response = chat.send_message(question)
     if len(response.text)<=500:
         print("Edith:",response.text)
