@@ -14,7 +14,6 @@ import speech_recognition as sr
 
 engine=pyttsx3.init()
 
-engine.setProperty('rate', 180)
 handsfree=False
 i=1
 
@@ -212,9 +211,11 @@ def open_and_wait_for_file_close(filename):
 chat = model.start_chat(history=[])
 
 updateRules(chat,False)
-
+response = chat.send_message("give your introduction and greet me and ask for my name and keep it short")
+print("Edith: "+response.text)
+speak(response.text)
 quit=False
-handsfree=False
+handsfree=True
 question="None"
 while True:
     if quit==True:
